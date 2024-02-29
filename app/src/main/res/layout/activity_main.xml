@@ -22,9 +22,10 @@
 
                 <com.google.android.material.appbar.MaterialToolbar
                     android:id="@+id/toolbar"
+                    style="@style/MyToolbar"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    style="@style/MyToolbar"
+                    android:background="#fff"
                     android:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -40,6 +41,7 @@
                         android:scaleX="1.5"
                         android:scaleY="1.5"
                         app:srcCompat="@drawable/app_icon"
+                        app:tint="@null"
                         tools:layout_editor_absoluteX="16dp"
                         tools:layout_editor_absoluteY="18dp" />
 

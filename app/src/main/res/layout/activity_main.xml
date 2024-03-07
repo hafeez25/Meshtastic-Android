@@ -63,10 +63,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             app:tabGravity="fill"
-            app:tabMode="fixed"
-            app:tabIconTint="#1f2f3f"
-            app:tabIndicatorColor="#ff0000"
-            app:tabIndicatorFullWidth="true"/>
+            app:tabIconTint="@color/tab_color_selector"
+            app:tabIndicatorColor="@color/selectedColor"/>
 
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

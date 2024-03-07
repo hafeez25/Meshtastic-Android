@@ -667,7 +667,8 @@ fun MapView(
                     .align(Alignment.TopEnd),
             ) {
                 IconButton(
-                    onClick = { showMapStyleDialog() },
+                    onClick = { showMapStyleDialog()
+                              print("show map button clicked")},
                     drawableRes = R.drawable.ic_twotone_layers_24,
                     contentDescription = R.string.map_style_selection,
                 )

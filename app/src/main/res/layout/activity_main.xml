@@ -64,7 +64,8 @@
             android:layout_gravity="bottom"
             app:tabGravity="fill"
             app:tabIconTint="@color/tab_color_selector"
-            app:tabIndicatorColor="@color/selectedColor"/>
+            app:tabIndicatorColor="@color/selectedColor"
+            />
 
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

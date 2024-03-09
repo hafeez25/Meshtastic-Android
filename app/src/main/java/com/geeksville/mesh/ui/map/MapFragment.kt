@@ -582,6 +582,39 @@ fun MapView(
         val dialog = builder.create()
         dialog.show()
     }
+    fun showShapeDialog() {
+        val builder = MaterialAlertDialogBuilder(context)
+        val shapeOptions: Array<CharSequence> = arrayOf("Circle", "Polygon", "Pen") // Change this array to match your available shapes
+
+        val selectedShapeInt = mPrefs.getInt("1", 0)
+        builder.setSingleChoiceItems(shapeOptions, selectedShapeInt) { dialog, which ->
+            debug("Set 1 pref to $which")
+            mPrefs.edit().putInt("1", which).apply()
+            dialog.dismiss()
+
+            // Perform action based on the selected shape
+            when (which) {
+                0 -> {
+                    // Handle circle selection
+                    // Call a function or perform an action related to the circle
+                }
+                1 -> {
+                    // Handle triangle selection
+                    // Call a function or perform an action related to the triangle
+                }
+                2 -> {
+                    // Handle pen selection
+                    // Call a function or perform an action related to the pen
+                }
+            }
+        }
+
+        val dialog = builder.create()
+        dialog.show()
+    }
+
+
+
 
     fun showCacheManagerDialog() {
         MaterialAlertDialogBuilder(context)
@@ -681,6 +714,14 @@ fun MapView(
                     drawableRes = if (myLocationOverlay == null) R.drawable.ic_twotone_my_location_24
                     else R.drawable.ic_twotone_location_disabled_24,
                     contentDescription = null,
+                    modifier = Modifier.padding(top = 8.dp),
+                )
+
+                IconButton(
+                    onClick = { showShapeDialog()
+                        print("show map draw on map")},
+                    drawableRes = R.drawable.ic_draw_shape,
+                    contentDescription = R.string.map_style_selection,
                     modifier = Modifier.padding(top = 8.dp),
                 )
             }

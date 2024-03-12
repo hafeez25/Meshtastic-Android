@@ -337,7 +337,7 @@ class MainActivity : AppCompatActivity(), Logging {
                     if (info != null) {
                         val isOld = info.minAppVersion > BuildConfig.VERSION_CODE
                         if (isOld)
-                            showAlert(R.string.app_too_old, R.string.must_update)
+//                            showAlert(R.string.app_too_old, R.string.must_update)
                         else {
                             // If we are already doing an update don't put up a dialog or try to get device info
                             val isUpdating = service.updateStatus >= 0

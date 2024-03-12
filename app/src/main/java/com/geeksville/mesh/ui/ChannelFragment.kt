@@ -286,7 +286,7 @@ fun ChannelScreen(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(start = 24.dp, top = 16.dp, end = 24.dp, bottom=80.dp),
+            .padding(start = 24.dp, top = 16.dp, end = 24.dp, bottom=16.dp),
     ) {
         if (!showChannelEditor) item {
             ClickableTextField(

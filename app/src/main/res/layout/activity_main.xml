@@ -50,13 +50,7 @@
                 </com.google.android.material.appbar.MaterialToolbar>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tab_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:tabGravity="fill"
-                app:tabIconTint="@color/tab_color_selector"
-                app:tabIndicatorColor="@color/selectedColor" />
+
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.viewpager2.widget.ViewPager2
@@ -64,6 +58,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabGravity="fill"
+            app:tabIconTint="@color/tab_color_selector"
+            app:tabIndicatorColor="@color/selectedColor"
+            android:layout_gravity="bottom"
+            />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </FrameLayout>
 <!--<?xml version="1.0" encoding="utf-8"?>-->

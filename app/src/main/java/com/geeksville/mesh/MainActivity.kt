@@ -191,9 +191,9 @@ class MainActivity : AppCompatActivity(), Logging {
                 prefs.getInt("theme", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
             )
             // First run: show AppIntroduction
-            if (!prefs.getBoolean("app_intro_completed", false)) {
-                startActivity(Intent(this, AppIntroduction::class.java))
-            }
+//            if (!prefs.getBoolean("app_intro_completed", false)) {
+//                startActivity(Intent(this, AppIntroduction::class.java))
+//            }
             // Ask user to rate in play store
             (application as GeeksvilleApplication).askToRate(this)
         }

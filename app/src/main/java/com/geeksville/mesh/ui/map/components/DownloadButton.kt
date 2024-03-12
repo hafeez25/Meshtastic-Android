@@ -34,6 +34,7 @@ fun DownloadButton(
         FloatingActionButton(
             onClick = onClick,
             backgroundColor = MaterialTheme.colors.primary,
+
         ) {
             Image(
                 painterResource(R.drawable.ic_twotone_download_24),

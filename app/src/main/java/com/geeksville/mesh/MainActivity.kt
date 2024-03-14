@@ -1,6 +1,7 @@
 package com.geeksville.mesh
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.bluetooth.BluetoothAdapter
 import android.content.*
 import android.content.pm.PackageInfo
@@ -15,6 +16,7 @@ import android.text.method.LinkMovementMethod
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -37,6 +39,7 @@ import com.geeksville.mesh.model.UIViewModel
 import com.geeksville.mesh.model.primaryChannel
 import com.geeksville.mesh.model.toChannelSet
 import com.geeksville.mesh.repository.radio.BluetoothInterface
+import  com.geeksville.mesh.model.AuthViewModel
 import com.geeksville.mesh.service.*
 import com.geeksville.mesh.ui.*
 import com.geeksville.mesh.ui.map.MapFragment
@@ -56,54 +59,9 @@ import java.text.DateFormat
 import java.util.Date
 import javax.inject.Inject
 
-/*
-UI design
-
-material setup instructions: https://material.io/develop/android/docs/getting-started/
-dark theme (or use system eventually) https://material.io/develop/android/theming/dark/
-
-NavDrawer is a standard draw which can be dragged in from the left or the menu icon inside the app
-title.
-
-Fragments:
-
-SettingsFragment shows "Settings"
-  username
-  shortname
-  bluetooth pairing list
-  (eventually misc device settings that are not channel related)
-
-Channel fragment "Channel"
-  qr code, copy link button
-  ch number
-  misc other settings
-  (eventually a way of choosing between past channels)
-
-ChatFragment "Messages"
-  a text box to enter new texts
-  a scrolling list of rows.  each row is a text and a sender info layout
-
-NodeListFragment "Users"
-  a node info row for every node
-
-ViewModels:
-
-  BTScanModel starts/stops bt scan and provides list of devices (manages entire scan lifecycle)
-
-  MeshModel contains: (manages entire service relationship)
-  current received texts
-  current radio macaddr
-  current node infos (updated dynamically)
-
-eventually use bottom navigation bar to switch between, Members, Chat, Channel, Settings. https://material.io/develop/android/components/bottom-navigation-view/
-  use numbers of # chat messages and # of members in the badges.
-
-(per this recommendation to not use top tabs: https://ux.stackexchange.com/questions/102439/android-ux-when-to-use-bottom-navigation-and-when-to-use-tabs )
 
 
-eventually:
-  make a custom theme: https://github.com/material-components/material-components-android/tree/master/material-theme-builder
-*/
+
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), Logging {
@@ -115,6 +73,7 @@ class MainActivity : AppCompatActivity(), Logging {
 
     private val bluetoothViewModel: BluetoothViewModel by viewModels()
     private val model: UIViewModel by viewModels()
+    private val authViewModel: AuthViewModel by viewModels()
 
     @Inject
     internal lateinit var serviceRepository: ServiceRepository
@@ -181,6 +140,14 @@ class MainActivity : AppCompatActivity(), Logging {
         super.onCreate(savedInstanceState)
 
         if (savedInstanceState == null) {
+
+            // Check if the PIN is set and handle authentication
+            if (!authViewModel.isPinSet()) {
+                showPinSetupDialog()
+            } else {
+                showPinLoginDialog()
+            }
+
             val prefs = UIViewModel.getPreferences(this)
             // First run: migrate in-app language prefs to appcompat
             val lang = prefs.getString("lang", LanguageUtils.SYSTEM_DEFAULT)
@@ -191,11 +158,12 @@ class MainActivity : AppCompatActivity(), Logging {
                 prefs.getInt("theme", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
             )
             // First run: show AppIntroduction
-//            if (!prefs.getBoolean("app_intro_completed", false)) {
-//                startActivity(Intent(this, AppIntroduction::class.java))
-//            }
+            if (!prefs.getBoolean("app_intro_completed", false)) {
+                startActivity(Intent(this, AppIntroduction::class.java))
+
+            }
             // Ask user to rate in play store
-            (application as GeeksvilleApplication).askToRate(this)
+//            (application as GeeksvilleApplication).askToRate(this)
         }
 
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -224,6 +192,51 @@ class MainActivity : AppCompatActivity(), Logging {
         // Handle any intent
         handleIntent(intent)
     }
+
+
+    //login and registration
+    private fun showPinSetupDialog() {
+        val pinView = layoutInflater.inflate(R.layout.pin_input_dialog, null)
+        val pinInput = pinView.findViewById<EditText>(R.id.pinInput)
+
+        AlertDialog.Builder(this)
+            .setTitle("Set PIN")
+            .setView(pinView)
+            .setPositiveButton("Save") { dialog, _ ->
+                val pin = pinInput.text.toString()
+                if (pin.isNotEmpty()) {
+                    authViewModel.savePinCode(pin)
+                    Toast.makeText(this, "PIN saved successfully!", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "PIN cannot be empty", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setCancelable(false)
+            .show()
+    }
+
+    private fun showPinLoginDialog() {
+        val pinView = layoutInflater.inflate(R.layout.pin_input_dialog, null)
+        val pinInput = pinView.findViewById<EditText>(R.id.pinInput)
+
+        AlertDialog.Builder(this)
+            .setTitle("Enter PIN")
+            .setView(pinView)
+            .setPositiveButton("Login") { dialog, _ ->
+                val pin = pinInput.text.toString()
+                if (authViewModel.isPinValid(pin)) {
+                    // Correct PIN
+                    // Continue to the app's main functionality
+                } else {
+                    // Incorrect PIN
+                    Toast.makeText(this, "Incorrect PIN, try again!", Toast.LENGTH_SHORT).show()
+                    showPinLoginDialog()  // Show the dialog again for reattempt
+                }
+            }
+            .setCancelable(false)
+            .show()
+    }
+
 
     private fun initToolbar() {
         val toolbar = binding.toolbar as Toolbar
@@ -530,6 +543,7 @@ class MainActivity : AppCompatActivity(), Logging {
 
     override fun onStart() {
         super.onStart()
+
 
         model.connectionState.observe(this) { state ->
             onMeshConnectionChanged(state)

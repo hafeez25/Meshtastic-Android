@@ -200,8 +200,12 @@
             </intent-filter>
         </receiver>
 
-        <activity
-            android:name=".AppIntroduction"/>
+        <!--   <activity
+             android:name=".AppIntroduction"/>-->
+        <activity android:name=".Register"/>
+        <activity android:name=".Login"/>
+
+
 
         <!-- allow for plugin discovery -->
         <activity

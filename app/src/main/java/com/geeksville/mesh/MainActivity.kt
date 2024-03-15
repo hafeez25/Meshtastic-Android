@@ -143,9 +143,11 @@ class MainActivity : AppCompatActivity(), Logging {
 
             // Check if the PIN is set and handle authentication
             if (!authViewModel.isPinSet()) {
-                showPinSetupDialog()
-            } else {
-                showPinLoginDialog()
+                // No PIN set, start Register activity
+                startActivity(Intent(this, Register::class.java))
+            }else{
+                startActivity(Intent(this, Login::class.java))
+
             }
 
             val prefs = UIViewModel.getPreferences(this)
@@ -195,47 +197,6 @@ class MainActivity : AppCompatActivity(), Logging {
 
 
     //login and registration
-    private fun showPinSetupDialog() {
-        val pinView = layoutInflater.inflate(R.layout.pin_input_dialog, null)
-        val pinInput = pinView.findViewById<EditText>(R.id.pinInput)
-
-        AlertDialog.Builder(this)
-            .setTitle("Set PIN")
-            .setView(pinView)
-            .setPositiveButton("Save") { dialog, _ ->
-                val pin = pinInput.text.toString()
-                if (pin.isNotEmpty()) {
-                    authViewModel.savePinCode(pin)
-                    Toast.makeText(this, "PIN saved successfully!", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(this, "PIN cannot be empty", Toast.LENGTH_SHORT).show()
-                }
-            }
-            .setCancelable(false)
-            .show()
-    }
-
-    private fun showPinLoginDialog() {
-        val pinView = layoutInflater.inflate(R.layout.pin_input_dialog, null)
-        val pinInput = pinView.findViewById<EditText>(R.id.pinInput)
-
-        AlertDialog.Builder(this)
-            .setTitle("Enter PIN")
-            .setView(pinView)
-            .setPositiveButton("Login") { dialog, _ ->
-                val pin = pinInput.text.toString()
-                if (authViewModel.isPinValid(pin)) {
-                    // Correct PIN
-                    // Continue to the app's main functionality
-                } else {
-                    // Incorrect PIN
-                    Toast.makeText(this, "Incorrect PIN, try again!", Toast.LENGTH_SHORT).show()
-                    showPinLoginDialog()  // Show the dialog again for reattempt
-                }
-            }
-            .setCancelable(false)
-            .show()
-    }
 
 
     private fun initToolbar() {

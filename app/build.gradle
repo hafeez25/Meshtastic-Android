@@ -266,6 +266,9 @@ dependencies {
     implementation "org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5"
     // HTTP
     implementation 'com.squareup.okhttp3:okhttp:4.9.1'
+
+    // Gson
+    implementation 'com.google.code.gson:gson:2.10'
 }
 
 ksp {

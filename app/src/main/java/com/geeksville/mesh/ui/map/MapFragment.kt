@@ -91,7 +91,11 @@ import org.osmdroid.views.overlay.infowindow.InfoWindow
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import java.io.File
 import java.text.DateFormat
-
+import com.google.gson.Gson
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 
 @AndroidEntryPoint
 class MapFragment : ScreenFragment("Map Fragment"), Logging {
@@ -130,6 +134,16 @@ class MapFragment : ScreenFragment("Map Fragment"), Logging {
 
 }
 
+//@Composable
+//private fun MapView.UpdateMarkers(
+//    nodeMarkers: List<MarkerWithLabel>,
+//    waypointMarkers: List<MarkerWithLabel>,
+//) {
+//    debug("Showing on map: ${nodeMarkers.size} nodes ${waypointMarkers.size} waypoints")
+//    overlays.removeAll(overlays.filterIsInstance<MarkerWithLabel>())
+//    overlays.addAll(nodeMarkers + waypointMarkers)
+//}
+
 @Composable
 private fun MapView.UpdateMarkers(
     nodeMarkers: List<MarkerWithLabel>,
@@ -138,6 +152,30 @@ private fun MapView.UpdateMarkers(
     debug("Showing on map: ${nodeMarkers.size} nodes ${waypointMarkers.size} waypoints")
     overlays.removeAll(overlays.filterIsInstance<MarkerWithLabel>())
     overlays.addAll(nodeMarkers + waypointMarkers)
+
+//    val gson = Gson()
+//    val nodeMarkersJson = gson.toJson(nodeMarkers)
+//    val waypointMarkersJson = gson.toJson(waypointMarkers)
+//
+//    val jsonMediaType = "application/json; charset=utf-8".toMediaType()
+//    val body = "{ \"nodeMarkers\": $nodeMarkersJson, \"waypointMarkers\": $waypointMarkersJson }".toRequestBody(jsonMediaType)
+//
+//    val client = OkHttpClient()
+//    val request = Request.Builder()
+//        .url("http://10.24.0.30/api/markers")
+//        .post(body)
+//        .build()
+
+//    try {
+//        client.newCall(request).execute().use { response ->
+////        if (!response.isSuccessful) throw IOException("Unexpected code $response")
+////        println(response.body?.string())
+//        }
+//    }catch (error : Error){
+//        print(error);
+//    }
+
+
 }
 
 @Composable

@@ -59,6 +59,5 @@ class Login : AppCompatActivity() {
 
     override fun onBackPressed() {
         // Optional: provide feedback or close the app
-
     }
 }

@@ -32,10 +32,10 @@
         android:id="@+id/preferences_language"
         android:title="@string/preferences_language"
         app:showAsAction="withText" />
-    <item
-        android:id="@+id/show_intro"
-        android:title="@string/intro_show"
-        app:showAsAction="withText" />
+<!--    <item-->
+<!--        android:id="@+id/show_intro"-->
+<!--        android:title="@string/intro_show"-->
+<!--        app:showAsAction="withText" />-->
     <item
         android:id="@+id/preferences_quick_chat"
         android:title="@string/quick_chat"

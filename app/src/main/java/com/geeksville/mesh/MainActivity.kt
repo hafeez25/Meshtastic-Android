@@ -196,7 +196,7 @@ class MainActivity : AppCompatActivity(), Logging {
     }
 
 
-    //login and registration
+
 
 
     private fun initToolbar() {
@@ -645,10 +645,10 @@ class MainActivity : AppCompatActivity(), Logging {
                 chooseLangDialog()
                 return true
             }
-            R.id.show_intro -> {
-                startActivity(Intent(this, AppIntroduction::class.java))
-                return true
-            }
+//            R.id.show_intro -> {
+//                startActivity(Intent(this, AppIntroduction::class.java))
+//                return true
+//            }
             R.id.preferences_quick_chat -> {
                 val fragmentManager: FragmentManager = supportFragmentManager
                 val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()

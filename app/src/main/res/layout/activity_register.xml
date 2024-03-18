@@ -5,6 +5,20 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
+    <ImageView
+        android:id="@+id/logoImageView"
+        android:layout_width="153dp"
+        android:layout_height="153dp"
+        android:layout_marginTop="144dp"
+        android:layout_marginBottom="16dp"
+        android:contentDescription="Logo Icon"
+        android:src="@drawable/logo"
+
+        app:layout_constraintBottom_toTopOf="@id/pinInputLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/pinInputLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
@@ -13,14 +27,14 @@
         android:layout_marginTop="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/logoImageView"
         app:endIconMode="password_toggle">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/registerPinEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="set_your_pin"
+            android:hint="Enter your pin"
             android:inputType="numberPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -39,7 +53,7 @@
             android:id="@+id/confirmPinEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="confirm_your_pin"
+            android:hint="Confirm your pin"
             android:inputType="numberPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 

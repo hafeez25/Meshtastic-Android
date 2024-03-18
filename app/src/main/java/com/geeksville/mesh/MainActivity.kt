@@ -13,6 +13,7 @@ import android.os.Handler
 import android.os.Looper
 import android.os.RemoteException
 import android.text.method.LinkMovementMethod
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
@@ -666,6 +667,10 @@ class MainActivity : AppCompatActivity(), Logging {
         try {
             val packageInfo: PackageInfo = packageManager.getPackageInfoCompat(packageName, 0)
             val versionName = packageInfo.versionName
+//
+        //    Log.d("MainActivity", "App version: $versionName")
+//            Log.w("MainActivity", "This is from getVersionInfo function")
+
             Toast.makeText(this, versionName, Toast.LENGTH_LONG).show()
         } catch (e: PackageManager.NameNotFoundException) {
             errormsg("Can not find the version: ${e.message}")

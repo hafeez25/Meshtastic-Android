@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -222,11 +223,54 @@ fun MapView(
     }
 
     fun MapView.onNodesChanged(nodes: Collection<NodeInfo>): List<MarkerWithLabel> {
-        val nodesWithPosition = nodes.filter { it.validPosition != null }
+        val nodesWithPosition = nodes.filter { 
+    it.validPosition != null && (System.currentTimeMillis() - it.lastHeard) < 2 * 60 * 1000 
+}
         val ourNode = model.ourNodeInfo.value
         val gpsFormat = model.config.display.gpsFormat.number
         val displayUnits = model.config.display.units.number
         return nodesWithPosition.map { node ->
+
+            val(q,r)=node.position!! to node.user!!;
+
+
+            Log.i("MapFragment", node.toString())
+            Log.w("Marker", "Node Info")
+            Log.i("Marker","hw Model String:"+r.hwModelString.toString())
+            Log.i("Marker", "Id: " +  r.id.toString())
+            Log.i("Marker", "Long Name: " +  r.longName.toString())
+            Log.i("Marker", "Short Name: " +  r.shortName.toString())
+            Log.i("Marker", "IsLicensed: " +  r.isLicensed)
+            Log.i("Marker", "GPS Format: " +  q.gpsString(20))
+            Log.i("Marker", "Altitude: " +  q.altitude)
+            Log.i("Marker", "Battery: " +  node.batteryStr)
+            Log.i("Marker", "Channel: " +  node.channel.toString())
+            Log.i("Marker", "Last Updated: " +  node.lastHeard.toString())
+            Log.i("Marker","Battery Percentage: " + node.batteryLevel.toString())
+            Log.i("Marker","Device Metrics: " + node.deviceMetrics.toString())
+            Log.i("Marker","Environment Metrics: " + node.environmentMetrics.toString())
+            Log.i("Marker","IsOnline: " + node.isOnline.toString())
+            Log.i("Marker","Num: " + node.num.toString())
+            Log.i("Marker","Position: " + node.position.toString())
+            Log.i("Marker","rssi: " + node.rssi.toString())
+            Log.i("Marker","snr: " + node.snr.toString())
+            Log.i("Marker","user: " + node.user.toString())
+            Log.i("Marker","Valid Position: " + node.validPosition.toString())
+            Log.i("Marker","Voltage: " + node.voltage.toString())
+            Log.i("Marker","IsFahrenheit: " + node.envMetricStr(true).toString())
+
+
+
+
+
+
+
+
+
+
+
+
+
             val (p, u) = node.position!! to node.user!!
             MarkerWithLabel(
                 mapView = this,

@@ -223,9 +223,24 @@ fun MapView(
     }
 
     fun MapView.onNodesChanged(nodes: Collection<NodeInfo>): List<MarkerWithLabel> {
-        val nodesWithPosition = nodes.filter { 
-    it.validPosition != null && (System.currentTimeMillis() - it.lastHeard) < 2 * 60 * 1000 
-}
+
+       // Retaining first 10 digits
+        val nodesWithPosition = nodes.filter {
+            val currentTime = (System.currentTimeMillis() / 1000).toInt()
+            val diffMin = (currentTime - it.lastHeard) / 60
+            Log.i("Time","Time Difference :" + diffMin);
+
+            it.validPosition != null && diffMin<=2
+        }
+
+//        nodes.map {
+//            val(q,r)=it.position!! to it.user!!;
+//            Log.i("Time","user Time :" + q.time);
+//            Log.i("Time", "Current Time : " + System.currentTimeMillis().toString().take(10).toLong())
+//            Log.i("Time", "Last Heard : " + it.lastHeard.toString())
+//            val time = System.currentTimeMillis() - it.lastHeard
+//            Log.i("Time", "Difference : " + time.toString())
+//        }
         val ourNode = model.ourNodeInfo.value
         val gpsFormat = model.config.display.gpsFormat.number
         val displayUnits = model.config.display.units.number

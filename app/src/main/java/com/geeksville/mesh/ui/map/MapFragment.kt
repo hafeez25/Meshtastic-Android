@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -92,6 +93,7 @@ import org.osmdroid.views.overlay.infowindow.InfoWindow
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import java.io.File
 import java.text.DateFormat
+import kotlin.random.Random
 
 
 @AndroidEntryPoint
@@ -153,6 +155,7 @@ fun MapView(
     // constants
     val prefsName = "org.geeksville.osm.prefs"
     val mapStyleId = "map_style_id"
+    var totalNodes = 0;
 
     var zoomLevelMin = 0.0
     var zoomLevelMax = 0.0
@@ -225,12 +228,13 @@ fun MapView(
     fun MapView.onNodesChanged(nodes: Collection<NodeInfo>): List<MarkerWithLabel> {
 
        // Retaining first 10 digits
+        totalNodes = nodes.size
         val nodesWithPosition = nodes.filter {
             val currentTime = (System.currentTimeMillis() / 1000).toInt()
             val diffMin = (currentTime - it.lastHeard) / 60
             Log.i("Time","Time Difference :" + diffMin);
 
-            it.validPosition != null && diffMin<=2
+            it.validPosition != null && diffMin<=20000
         }
 
 //        nodes.map {
@@ -276,20 +280,10 @@ fun MapView(
 
 
 
-
-
-
-
-
-
-
-
-
-
             val (p, u) = node.position!! to node.user!!
             MarkerWithLabel(
                 mapView = this,
-                label = "${u.shortName} ${formatAgo(p.time)}"
+                label = "${if (u.shortName != null) u.shortName else "id ${u.id}"} ${formatAgo(p.time)}"
             ).apply {
                 id = u.id
                 title = "${u.longName} ${node.batteryStr}"
@@ -745,6 +739,10 @@ fun MapView(
                     contentDescription = null,
                     modifier = Modifier.padding(top = 8.dp),
                 )
+                Text(
+    text = "Total nodes: $totalNodes",
+    modifier = Modifier.padding(top = 8.dp)
+)
 
 
             }

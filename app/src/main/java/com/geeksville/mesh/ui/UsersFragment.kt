@@ -281,7 +281,7 @@ class UsersFragment : ScreenFragment("Users"), Logging {
             }
 
             if (n.num == ourNodeInfo.num) {
-                val text = "ChUtil %.1f%% AirUtilTX %.1f%%".format(
+                val text = "Total nodes : ${getItemCount()} \n ChUtil %.1f%% AirUtilTX %.1f%%".format(
                     n.deviceMetrics?.channelUtilization,
                     n.deviceMetrics?.airUtilTx
                 )

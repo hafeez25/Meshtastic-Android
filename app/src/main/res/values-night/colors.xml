@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorOnPrimary">#67EA94</color>
-    <color name="colorPrimary">#FFFFFF</color>
+    <color name="colorPrimary">#67EA94</color>
     <color name="colorPrimaryDark">#141414</color>
     <color name="colorMsg">#212121</color>
     <color name="colorMyMsg">#28463C</color>
@@ -12,3 +12,17 @@
     <color name="unselectedColor">#AAAAAA</color>
     <color name="colorAnnotation">#039BE5</color>
 </resources>
+<!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<resources>-->
+<!--    <color name="colorOnPrimary">#67EA94</color>-->
+<!--    <color name="colorPrimary">#141414</color>-->
+<!--    <color name="colorPrimaryDark">#141414</color>-->
+<!--    <color name="colorMsg">#212121</color>-->
+<!--    <color name="colorMyMsg">#28463C</color>-->
+<!--    <color name="colorAdvancedBackground">#141414</color>-->
+<!--    <color name="colorIconTint">#FFFFFF</color>-->
+<!--    <color name="colorMenuItem">#FFFFFF</color>-->
+<!--    <color name="selectedColor">#67EA94</color>-->
+<!--    <color name="unselectedColor">#AAAAAA</color>-->
+<!--    <color name="colorAnnotation">#039BE5</color>-->
+<!--</resources>-->

@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,6 +39,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.geeksville.mesh.BuildConfig
 import com.geeksville.mesh.DataPacket
+import com.geeksville.mesh.MeshProtos
 import com.geeksville.mesh.MeshProtos.Waypoint
 import com.geeksville.mesh.NodeInfo
 import com.geeksville.mesh.R
@@ -91,8 +93,11 @@ import org.osmdroid.views.overlay.infowindow.InfoWindow
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import java.io.File
 import java.text.DateFormat
+import okhttp3.*
+import java.io.IOException
 import com.google.gson.Gson
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -144,8 +149,50 @@ class MapFragment : ScreenFragment("Map Fragment"), Logging {
 //    overlays.addAll(nodeMarkers + waypointMarkers)
 //}
 
+fun sendHttpPostRequest(url: String, body: String) {
+//    Log.i("hafizur","inside function call")
+
+    val client = OkHttpClient()
+    val requestBody = RequestBody.create("application/json".toMediaTypeOrNull(), body)
+    val request = Request.Builder()
+        .url(url)
+        .post(requestBody)
+        .build()
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            // Handle failure
+            Log.i("hafizur",e.toString())
+
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            // Handle response
+            Log.i("hafizur",response.toString())
+
+        }
+    })
+}
+
+fun convertWaypointListToJson(waypoint: Waypoint): String {
+    val gson = Gson()
+    return gson.toJson(waypoint)
+}
+
+
+fun convertNodeInfoListToJson(nodeInfoList: List<NodeInfo>): String {
+    val gson = Gson()
+    return gson.toJson(nodeInfoList)
+}
+//fun convertWayPointToJson(waypoint: : String {
+//    val gson = Gson()
+//    return gson.toJson(nodeInfoList)
+//})
+
 @Composable
 private fun MapView.UpdateMarkers(
+
+
     nodeMarkers: List<MarkerWithLabel>,
     waypointMarkers: List<MarkerWithLabel>,
 ) {
@@ -153,27 +200,30 @@ private fun MapView.UpdateMarkers(
     overlays.removeAll(overlays.filterIsInstance<MarkerWithLabel>())
     overlays.addAll(nodeMarkers + waypointMarkers)
 
-//    val gson = Gson()
+    // val gson = Gson()
 //    val nodeMarkersJson = gson.toJson(nodeMarkers)
 //    val waypointMarkersJson = gson.toJson(waypointMarkers)
-//
-//    val jsonMediaType = "application/json; charset=utf-8".toMediaType()
-//    val body = "{ \"nodeMarkers\": $nodeMarkersJson, \"waypointMarkers\": $waypointMarkersJson }".toRequestBody(jsonMediaType)
-//
-//    val client = OkHttpClient()
-//    val request = Request.Builder()
-//        .url("http://10.24.0.30/api/markers")
-//        .post(body)
-//        .build()
 
-//    try {
-//        client.newCall(request).execute().use { response ->
-////        if (!response.isSuccessful) throw IOException("Unexpected code $response")
-////        println(response.body?.string())
-//        }
-//    }catch (error : Error){
-//        print(error);
-//    }
+    // val jsonMediaType = "application/json; charset=utf-8".toMediaType()
+//    val body = "{ \"nodeMarkers\": $nodeMarkersJson, \"waypointMarkers\": $waypointMarkersJson }".toRequestBody(jsonMediaType)
+// val body ="{\"hello\":\"world\"}".toRequestBody(jsonMediaType)
+//     val client = OkHttpClient()
+//     val request = Request.Builder()
+//         .url("http://192.168.159.190:3000/api")
+//         .post(body)
+//         .build()
+
+    // try {
+        // client.newCall(request).execute().use { response ->
+//        if (!response.isSuccessful) throw IOException("Unexpected code $response")
+//        println(response.body?.string())
+        // }
+    // }catch (error : Error){
+    //     print(error);
+    // }
+//    sendHttpPostRequest("https://jsonplaceholder.typicode.com/todos/1","HELO WORDL")
+//    Log.i("hafizur","inside updateMarkers function")
+
 
 
 }
@@ -260,12 +310,21 @@ fun MapView(
     }
 
     fun MapView.onNodesChanged(nodes: Collection<NodeInfo>): List<MarkerWithLabel> {
+//        Log.i("hafizur","inside onNodeChanged function")
+
+
         val nodesWithPosition = nodes.filter { it.validPosition != null }
+      val nodeString =   convertNodeInfoListToJson(nodesWithPosition);
+        sendHttpPostRequest("https://lora.aiqube.cloud/api",nodeString)
+
+//        Log.i("nodedata",nodeString);
+//        Log.i("nodedata",nodesWithPosition.toString());
         val ourNode = model.ourNodeInfo.value
         val gpsFormat = model.config.display.gpsFormat.number
         val displayUnits = model.config.display.units.number
         return nodesWithPosition.map { node ->
             val (p, u) = node.position!! to node.user!!
+
             MarkerWithLabel(
                 mapView = this,
                 label = "${u.shortName} ${formatAgo(p.time)}"
@@ -328,8 +387,15 @@ fun MapView(
     else model.nodeDB.nodes.value[id]?.user?.longName ?: context.getString(R.string.unknown_username)
 
     fun MapView.onWaypointChanged(waypoints: Collection<Packet>): List<MarkerWithLabel> {
+
         return waypoints.mapNotNull { waypoint ->
             val pt = waypoint.data.waypoint ?: return@mapNotNull null
+           val someData = convertWaypointListToJson(pt);
+            sendHttpPostRequest("https://lora.aiqube.cloud/api",someData);
+//        Log.i("waypoint",someData);
+
+
+
             val lock = if (pt.lockedTo != 0) "\uD83D\uDD12" else ""
             val time = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
                 .format(waypoint.received_time)

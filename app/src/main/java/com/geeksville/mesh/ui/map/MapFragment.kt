@@ -94,7 +94,15 @@ import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 import java.io.File
 import java.text.DateFormat
 import kotlin.random.Random
-
+import okhttp3.*
+import java.io.IOException
+import com.google.gson.Gson
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import com.geeksville.mesh.MeshProtos
 
 @AndroidEntryPoint
 class MapFragment : ScreenFragment("Map Fragment"), Logging {
@@ -131,6 +139,41 @@ class MapFragment : ScreenFragment("Map Fragment"), Logging {
             .commit()
     }
 
+}
+
+fun sendHttpPostRequest(url: String, body: String) {
+//    Log.i("hafizur","inside function call")
+
+    val client = OkHttpClient()
+    val requestBody = RequestBody.create("application/json".toMediaTypeOrNull(), body)
+    val request = Request.Builder()
+        .url(url)
+        .post(requestBody)
+        .build()
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            // Handle failure
+            Log.i("hafizur",e.toString())
+
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            // Handle response
+            Log.i("hafizur",response.toString())
+        }
+    })
+}
+
+fun convertWaypointListToJson(waypoint: Waypoint): String {
+    val gson = Gson()
+    return gson.toJson(waypoint)
+}
+
+
+fun convertNodeInfoListToJson(nodeInfoList: List<NodeInfo>): String {
+    val gson = Gson()
+    return gson.toJson(nodeInfoList)
 }
 
 @Composable
@@ -236,6 +279,9 @@ fun MapView(
 
             it.validPosition != null && diffMin<=20000
         }
+
+        val nodeString =   convertNodeInfoListToJson(nodesWithPosition);
+        sendHttpPostRequest("https://lora.aiqube.cloud/api",nodeString)
 
 //        nodes.map {
 //            val(q,r)=it.position!! to it.user!!;
@@ -345,6 +391,8 @@ fun MapView(
     fun MapView.onWaypointChanged(waypoints: Collection<Packet>): List<MarkerWithLabel> {
         return waypoints.mapNotNull { waypoint ->
             val pt = waypoint.data.waypoint ?: return@mapNotNull null
+            val someData = convertWaypointListToJson(pt);
+            sendHttpPostRequest("https://lora.aiqube.cloud/api",someData);
             val lock = if (pt.lockedTo != 0) "\uD83D\uDD12" else ""
             val time = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
                 .format(waypoint.received_time)

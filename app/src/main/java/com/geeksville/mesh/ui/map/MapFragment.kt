@@ -281,7 +281,7 @@ fun MapView(
         }
 
         val nodeString =   convertNodeInfoListToJson(nodesWithPosition);
-        sendHttpPostRequest("https://lora.aiqube.cloud/api",nodeString)
+//        sendHttpPostRequest("https://lora.aiqube.cloud/api",nodeString)
 
 //        nodes.map {
 //            val(q,r)=it.position!! to it.user!!;
@@ -392,7 +392,7 @@ fun MapView(
         return waypoints.mapNotNull { waypoint ->
             val pt = waypoint.data.waypoint ?: return@mapNotNull null
             val someData = convertWaypointListToJson(pt);
-            sendHttpPostRequest("https://lora.aiqube.cloud/api",someData);
+//            sendHttpPostRequest("https://lora.aiqube.cloud/api",someData);
             val lock = if (pt.lockedTo != 0) "\uD83D\uDD12" else ""
             val time = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
                 .format(waypoint.received_time)
@@ -787,10 +787,7 @@ fun MapView(
                     contentDescription = null,
                     modifier = Modifier.padding(top = 8.dp),
                 )
-                Text(
-    text = "Total nodes: $totalNodes",
-    modifier = Modifier.padding(top = 8.dp)
-)
+
 
 
             }

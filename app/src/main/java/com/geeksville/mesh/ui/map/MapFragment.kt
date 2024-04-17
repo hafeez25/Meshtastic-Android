@@ -281,7 +281,7 @@ fun MapView(
         }
 
         val nodeString =   convertNodeInfoListToJson(nodesWithPosition);
-//        sendHttpPostRequest("https://lora.aiqube.cloud/api",nodeString)
+        sendHttpPostRequest("https://loramesh.linear-amptech.com/data/marker",nodeString)
 
 //        nodes.map {
 //            val(q,r)=it.position!! to it.user!!;
@@ -379,7 +379,7 @@ fun MapView(
         debug("marker long pressed id=${id}")
         val waypoint = model.waypoints.value?.get(id)?.data?.waypoint ?: return
         // edit only when unlocked or lockedTo myNodeNum
-        if (waypoint.lockedTo in setOf(0, model.myNodeNum ?: 0) && model.isConnected())
+        if (waypoint.lockedTo in setOf(0, model.myNodeNum ?: 0) && model.isConnect7 ed())
             showEditWaypointDialog = waypoint
         else
             showDeleteMarkerDialog(waypoint)
@@ -392,7 +392,7 @@ fun MapView(
         return waypoints.mapNotNull { waypoint ->
             val pt = waypoint.data.waypoint ?: return@mapNotNull null
             val someData = convertWaypointListToJson(pt);
-//            sendHttpPostRequest("https://lora.aiqube.cloud/api",someData);
+            sendHttpPostRequest("https://loramesh.linear-amptech.com/data/waypoint",someData);
             val lock = if (pt.lockedTo != 0) "\uD83D\uDD12" else ""
             val time = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
                 .format(waypoint.received_time)

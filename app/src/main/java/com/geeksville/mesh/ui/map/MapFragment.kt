@@ -379,7 +379,7 @@ fun MapView(
         debug("marker long pressed id=${id}")
         val waypoint = model.waypoints.value?.get(id)?.data?.waypoint ?: return
         // edit only when unlocked or lockedTo myNodeNum
-        if (waypoint.lockedTo in setOf(0, model.myNodeNum ?: 0) && model.isConnect7 ed())
+        if (waypoint.lockedTo in setOf(0, model.myNodeNum ?: 0) && model.isConnected())
             showEditWaypointDialog = waypoint
         else
             showDeleteMarkerDialog(waypoint)

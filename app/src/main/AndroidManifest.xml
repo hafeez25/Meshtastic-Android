@@ -92,6 +92,18 @@
         android:theme="@style/AppTheme"
         android:localeConfig="@xml/locales_config">
 
+        <service
+    android:name="com.geeksville.mesh.service.DataSyncService"
+    android:exported="false"
+   >
+</service>
+
+<!-- <service
+    android:name=".service.DataSyncWorker"
+    android:exported="false"
+    android:foregroundServiceType="dataWorker">
+</service> -->
+
         <!-- Default crash collection and analytics off until we (possibly) turn it on in application.onCreate -->
         <meta-data
             android:name="firebase_crashlytics_collection_enabled"

@@ -1,13 +1,14 @@
 package com.geeksville.mesh
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.bluetooth.BluetoothAdapter
-import android.content.*
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.hardware.usb.UsbManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -17,11 +18,11 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
@@ -31,18 +32,36 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.geeksville.mesh.android.*
+import com.geeksville.mesh.android.BindFailedException
+import com.geeksville.mesh.android.Logging
+import com.geeksville.mesh.android.ServiceClient
+import com.geeksville.mesh.android.getBluetoothPermissions
+import com.geeksville.mesh.android.getNotificationPermissions
+import com.geeksville.mesh.android.hasBluetoothPermission
+import com.geeksville.mesh.android.hasNotificationPermission
+import com.geeksville.mesh.android.permissionMissing
+import com.geeksville.mesh.android.rationaleDialog
+import com.geeksville.mesh.android.shouldShowRequestPermissionRationale
 import com.geeksville.mesh.concurrent.handledLaunch
 import com.geeksville.mesh.databinding.ActivityMainBinding
+import com.geeksville.mesh.model.AuthViewModel
 import com.geeksville.mesh.model.BluetoothViewModel
 import com.geeksville.mesh.model.DeviceVersion
 import com.geeksville.mesh.model.UIViewModel
 import com.geeksville.mesh.model.primaryChannel
 import com.geeksville.mesh.model.toChannelSet
 import com.geeksville.mesh.repository.radio.BluetoothInterface
-import  com.geeksville.mesh.model.AuthViewModel
-import com.geeksville.mesh.service.*
-import com.geeksville.mesh.ui.*
+import com.geeksville.mesh.service.DataSyncService
+import com.geeksville.mesh.service.MeshService
+import com.geeksville.mesh.service.ServiceRepository
+import com.geeksville.mesh.service.startService
+import com.geeksville.mesh.ui.ChannelFragment
+import com.geeksville.mesh.ui.ContactsFragment
+import com.geeksville.mesh.ui.DebugFragment
+import com.geeksville.mesh.ui.DeviceSettingsFragment
+import com.geeksville.mesh.ui.QuickChatSettingsFragment
+import com.geeksville.mesh.ui.SettingsFragment
+import com.geeksville.mesh.ui.UsersFragment
 import com.geeksville.mesh.ui.map.MapFragment
 import com.geeksville.mesh.util.Exceptions
 import com.geeksville.mesh.util.LanguageUtils
@@ -59,9 +78,6 @@ import kotlinx.coroutines.cancel
 import java.text.DateFormat
 import java.util.Date
 import javax.inject.Inject
-
-
-
 
 
 @AndroidEntryPoint
@@ -136,9 +152,21 @@ class MainActivity : AppCompatActivity(), Logging {
         override fun createFragment(position: Int): Fragment = tabInfos[position].content
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
+          // Start the com.geeksville.mesh.service.DataSyncService
+        val serviceIntent = Intent(this, DataSyncService::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Log.i("DataSynce","MainActivity File")
+            startService(serviceIntent) // Necessary to call for compatibility, consider context
+        } else {
+            startService(serviceIntent)
+        }
+
+
+
 
         if (savedInstanceState == null) {
 

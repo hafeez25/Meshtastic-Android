@@ -1,6 +1,7 @@
 package com.geeksville.mesh.ui.map
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
@@ -103,11 +104,13 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import com.geeksville.mesh.MeshProtos
+import com.geeksville.mesh.service.DataSyncService
 import org.json.JSONObject
 @AndroidEntryPoint
 class MapFragment : ScreenFragment("Map Fragment"), Logging {
 
     private val model: UIViewModel by activityViewModels()
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -324,47 +327,13 @@ fun MapView(
         Log.i("markeshafiz",nodeString)
         sendHttpPostRequest("https://loramesh.linear-amptech.com/data/marker",nodeString)
 
-//        nodes.map {
-//            val(q,r)=it.position!! to it.user!!;
-//            Log.i("Time","user Time :" + q.time);
-//            Log.i("Time", "Current Time : " + System.currentTimeMillis().toString().take(10).toLong())
-//            Log.i("Time", "Last Heard : " + it.lastHeard.toString())
-//            val time = System.currentTimeMillis() - it.lastHeard
-//            Log.i("Time", "Difference : " + time.toString())
-//        }
+
         val ourNode = model.ourNodeInfo.value
         val gpsFormat = model.config.display.gpsFormat.number
         val displayUnits = model.config.display.units.number
         return nodesWithPosition.map { node ->
 
             val(q,r)=node.position!! to node.user!!;
-
-
-            Log.i("MapFragment", node.toString())
-            Log.w("Marker", "Node Info")
-            Log.i("Marker","hw Model String:"+r.hwModelString.toString())
-            Log.i("Marker", "Id: " +  r.id.toString())
-            Log.i("Marker", "Long Name: " +  r.longName.toString())
-            Log.i("Marker", "Short Name: " +  r.shortName.toString())
-            Log.i("Marker", "IsLicensed: " +  r.isLicensed)
-            Log.i("Marker", "GPS Format: " +  q.gpsString(20))
-            Log.i("Marker", "Altitude: " +  q.altitude)
-            Log.i("Marker", "Battery: " +  node.batteryStr)
-            Log.i("Marker", "Channel: " +  node.channel.toString())
-            Log.i("Marker", "Last Updated: " +  node.lastHeard.toString())
-            Log.i("Marker","Battery Percentage: " + node.batteryLevel.toString())
-            Log.i("Marker","Device Metrics: " + node.deviceMetrics.toString())
-            Log.i("Marker","Environment Metrics: " + node.environmentMetrics.toString())
-            Log.i("Marker","IsOnline: " + node.isOnline.toString())
-            Log.i("Marker","Num: " + node.num.toString())
-            Log.i("Marker","Position: " + node.position.toString())
-            Log.i("Marker","rssi: " + node.rssi.toString())
-            Log.i("Marker","snr: " + node.snr.toString())
-            Log.i("Marker","user: " + node.user.toString())
-            Log.i("Marker","Valid Position: " + node.validPosition.toString())
-            Log.i("Marker","Voltage: " + node.voltage.toString())
-            Log.i("Marker","IsFahrenheit: " + node.envMetricStr(true).toString())
-
 
 
             val (p, u) = node.position!! to node.user!!

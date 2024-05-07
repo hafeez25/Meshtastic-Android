@@ -9,7 +9,6 @@ import com.geeksville.mesh.MeshProtos
 import com.geeksville.mesh.NodeInfo
 import com.geeksville.mesh.database.PacketRepository
 import com.geeksville.mesh.model.MyNodeDB
-import com.geeksville.mesh.model.NodeDB
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*

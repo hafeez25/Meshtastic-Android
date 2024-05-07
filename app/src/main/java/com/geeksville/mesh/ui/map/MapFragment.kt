@@ -145,30 +145,6 @@ class MapFragment : ScreenFragment("Map Fragment"), Logging {
 }
 
 
-//fun sendHttpPostRequest(url: String, body: String) {
-////    Log.i("hafizur","inside function call")
-//
-//    val client = OkHttpClient()
-//    val requestBody = RequestBody.create("application/json".toMediaTypeOrNull(), body)
-//    val request = Request.Builder()
-//        .url(url)
-//        .post(requestBody)
-//        .build()
-//
-//    client.newCall(request).enqueue(object : Callback {
-//        override fun onFailure(call: Call, e: IOException) {
-//            // Handle failure
-//            Log.i("hafizur",e.toString())
-//
-//        }
-//
-//        override fun onResponse(call: Call, response: Response) {
-//            // Handle response
-//            Log.i("hafizur",response.toString())
-//        }
-//    })
-//}
-
 
 
 fun sendHttpPostRequest(url: String, body: String, ) {
@@ -246,6 +222,10 @@ fun MapView(
     var zoomLevelMin = 0.0
     var zoomLevelMax = 0.0
 
+    //acess nodes and waypoint from db
+    val nodes by model.nodeDB.nodes.collectAsStateWithLifecycle()
+    val waypoints by model.waypoints.observeAsState(emptyMap())
+
     // Map Elements
     var downloadRegionBoundingBox: BoundingBox? by remember { mutableStateOf(null) }
     var myLocationOverlay: MyLocationNewOverlay? by remember { mutableStateOf(null) }
@@ -300,8 +280,7 @@ fun MapView(
         requestPermissionAndToggleLauncher.launch(context.getLocationPermissions())
     }
 
-    val nodes by model.nodeDB.nodes.collectAsStateWithLifecycle()
-    val waypoints by model.waypoints.observeAsState(emptyMap())
+
 
     var showDownloadButton: Boolean by remember { mutableStateOf(false) }
     var showEditWaypointDialog by remember { mutableStateOf<Waypoint?>(null) }

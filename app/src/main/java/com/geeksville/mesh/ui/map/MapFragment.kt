@@ -302,9 +302,9 @@ fun MapView(
             it.validPosition != null && diffMin<=20000
         }
 
-        val nodeString =   convertNodeInfoListToJson(nodesWithPosition);
-        Log.i("markeshafiz",nodeString)
-        sendHttpPostRequest("https://loramesh.linear-amptech.com/data/marker",nodeString)
+//        val nodeString =   convertNodeInfoListToJson(nodesWithPosition);
+//        Log.i("markeshafiz",nodeString)
+//        sendHttpPostRequest("https://loramesh.linear-amptech.com/data/marker",nodeString)
 
 
         val ourNode = model.ourNodeInfo.value
@@ -380,8 +380,8 @@ fun MapView(
     fun MapView.onWaypointChanged(waypoints: Collection<Packet>): List<MarkerWithLabel> {
         return waypoints.mapNotNull { waypoint ->
             val pt = waypoint.data.waypoint ?: return@mapNotNull null
-            val someData = convertWaypointListToJson(pt);
-            sendHttpPostRequest("https://loramesh.linear-amptech.com/data/waypoint",someData);
+//            val someData = convertWaypointListToJson(pt);
+//            sendHttpPostRequest("https://loramesh.linear-amptech.com/data/waypoint",someData);
             val lock = if (pt.lockedTo != 0) "\uD83D\uDD12" else ""
             val time = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
                 .format(waypoint.received_time)

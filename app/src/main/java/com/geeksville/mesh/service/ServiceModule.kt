@@ -1,6 +1,7 @@
 package com.geeksville.mesh.di
 import androidx.lifecycle.Lifecycle
 import com.geeksville.mesh.database.dao.NodeInfoDao
+import com.geeksville.mesh.database.dao.PacketDao
 import com.geeksville.mesh.model.MyNodeDB
 import dagger.Module
 import dagger.Provides
@@ -13,4 +14,6 @@ object ServiceModule {
     @Provides
     fun provideMyNodeDB(nodeInfoDao: NodeInfoDao, processLifecycle: Lifecycle): MyNodeDB =
         MyNodeDB(processLifecycle, nodeInfoDao)
+
+
 }

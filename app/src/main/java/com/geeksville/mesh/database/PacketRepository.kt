@@ -1,13 +1,28 @@
 package com.geeksville.mesh.database
 
+import android.util.Log
 import com.geeksville.mesh.DataPacket
+import com.geeksville.mesh.MeshProtos
 import com.geeksville.mesh.MessageStatus
+import com.geeksville.mesh.Portnums
 import com.geeksville.mesh.database.dao.PacketDao
 import com.geeksville.mesh.database.entity.Packet
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
+import com.google.gson.Gson
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
+import java.nio.charset.StandardCharsets
+import com.google.gson.FieldNamingStrategy
+import com.google.gson.GsonBuilder
+import kotlinx.coroutines.withContext
+import java.lang.reflect.Field
 
 class PacketRepository @Inject constructor(private val packetDaoLazy: dagger.Lazy<PacketDao>) {
     private val packetDao by lazy {
@@ -17,6 +32,31 @@ class PacketRepository @Inject constructor(private val packetDaoLazy: dagger.Laz
     suspend fun getAllPackets(): Flow<List<Packet>> = withContext(Dispatchers.IO) {
         packetDao.getAllPackets()
     }
+
+    private val gson = Gson()  // Assuming Gson is used for JSON conversion
+
+
+suspend fun getWaypoints(): String = withContext(Dispatchers.IO) {
+    val waypoints = mutableListOf<MeshProtos.Waypoint>()
+
+
+    val packets = packetDao.getAllWaypoints()
+    packets.forEach { packet ->
+
+        val waypoint = packet.data.waypoint
+        if (waypoint != null && waypoint.expire > System.currentTimeMillis() / 1000) {
+            waypoints.add(waypoint)
+
+        }
+    }
+
+    // Convert the list of filtered waypoints to JSON
+    val jsonResult = gson.toJson(waypoints)
+//    Log.i("DataSync", "Final waypoints JSON: $jsonResult")
+
+    jsonResult  // Return the JSON string
+}
+
 
     fun getContacts(): Flow<Map<String, Packet>> = packetDao.getContactKeys()
 

@@ -7,6 +7,7 @@ import android.util.Log
 
 import com.geeksville.mesh.MeshProtos
 import com.geeksville.mesh.NodeInfo
+import com.geeksville.mesh.database.PacketRepository
 import com.geeksville.mesh.model.MyNodeDB
 import com.geeksville.mesh.model.NodeDB
 import com.google.gson.Gson
@@ -26,11 +27,12 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class DataSyncService : Service() {
 
-
+    @Inject
+    lateinit var packetRepository: PacketRepository
     @Inject
     lateinit var myNodeDB: MyNodeDB
     private val serviceScope = CoroutineScope(Dispatchers.IO)
-    private val intervalMillis = 6000L
+    private val intervalMillis = 4000L
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -41,15 +43,27 @@ class DataSyncService : Service() {
             try {
 
                 while (isActive) {
+
                     launch {
+                        val waypointsJson = packetRepository.getWaypoints()
+                        com.geeksville.mesh.ui.map.sendHttpPostRequest(
+                            "https://loramesh.linear-amptech.com/data/waypoint",
+                            waypointsJson
+                        )
+
                         myNodeDB.nodeDBbyID.collect { nodeMap ->
                             val nodeInfoList = nodeMap.values.toList()
                             if (nodeInfoList.isNotEmpty()) {
                                 val json = convertNodeInfoListToJson(nodeInfoList)
-//                                sendHttpPostRequest("http://example.com/api/nodes", json)
-                                Log.i("DataSync",json)
+                                    sendHttpPostRequest("https://loramesh.linear-amptech.com/data/marker",json)
                             }
                         }
+
+
+
+
+
+
                     }
                    Log.i("DataSync","Send Data to Server")
                     delay(intervalMillis)

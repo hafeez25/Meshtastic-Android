@@ -156,12 +156,16 @@ class MainActivity : AppCompatActivity(), Logging {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
+        Log.i("DataSync","MainActivity File")
+
           // Start the com.geeksville.mesh.service.DataSyncService
         val serviceIntent = Intent(this, DataSyncService::class.java)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Log.i("DataSynce","MainActivity File")
+            Log.i("DataSync","DataSyncServie started if block")
             startService(serviceIntent) // Necessary to call for compatibility, consider context
         } else {
+            Log.i("DataSync","DataSyncServie started else block")
+
             startService(serviceIntent)
         }
 

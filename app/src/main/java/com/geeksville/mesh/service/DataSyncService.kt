@@ -51,6 +51,8 @@ class DataSyncService : Service() {
                             waypointsJson
                         )
 
+//                        Log.i("DataSync",waypointsJson)
+
                         myNodeDB.nodeDBbyID.collect { nodeMap ->
                             val nodeInfoList = nodeMap.values.toList()
                             if (nodeInfoList.isNotEmpty()) {

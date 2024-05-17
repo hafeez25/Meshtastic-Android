@@ -10,6 +10,7 @@ import com.geeksville.mesh.MyNodeInfo
 import com.geeksville.mesh.NodeInfo
 import com.geeksville.mesh.android.BuildUtils.errormsg
 import com.geeksville.mesh.database.dao.NodeInfoDao
+import com.google.gson.Gson
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.journeyapps.barcodescanner.BarcodeEncoder
@@ -110,6 +111,24 @@ class MyNodeDB @Inject constructor(
     fun myNodeInfoFlow(): Flow<MyNodeInfo?> = nodeInfoDao.getMyNodeInfo()
     fun nodeInfoFlow(): Flow<List<NodeInfo>> = nodeInfoDao.getNodes()
     suspend fun upsert(node: NodeInfo) = withContext(Dispatchers.IO) { nodeInfoDao.upsert(node) }
+
+
+
+
+    fun getAllNodes(): String{
+
+        val nodeJsonList = mutableListOf<String>()
+            val nodeData = nodeDBbyID.value.values.toList();
+
+        nodeData.forEach { nodeInfo ->
+            val gson = Gson()
+            val nodeJson = gson.toJson(nodeInfo)
+            nodeJsonList.add(nodeJson)
+        }
+
+        val jsonArray = nodeJsonList.joinToString(separator = "," , prefix = "[", postfix = "]")
+        return jsonArray;
+    }
 
     suspend fun installNodeDB(mi: MyNodeInfo, nodes: List<NodeInfo>) = withContext(Dispatchers.IO) {
         nodeInfoDao.apply {

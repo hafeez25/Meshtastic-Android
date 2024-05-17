@@ -64,6 +64,7 @@ class NodeDB @Inject constructor(
         nodeInfoDao.upsert(node)
     }
 
+
     suspend fun installNodeDB(mi: MyNodeInfo, nodes: List<NodeInfo>) = withContext(Dispatchers.IO) {
         nodeInfoDao.apply {
             clearNodeInfo()

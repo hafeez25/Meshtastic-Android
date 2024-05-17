@@ -147,53 +147,6 @@ class MapFragment : ScreenFragment("Map Fragment"), Logging {
 
 
 
-fun sendHttpPostRequest(url: String, body: String, ) {
-    val client = OkHttpClient()
-    val requestBody = body.toRequestBody("application/json".toMediaTypeOrNull())
-    val request = Request.Builder()
-        .url(url)
-        .post(requestBody)
-        .addHeader("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Imdyb3VwcyI6W10sIl9pZCI6IjY2MTJhNTE5Yzk4YWUxMDg1NTQ5ZmYwMSIsIm5hbWUiOiJoZWxsbyIsInBhc3N3b3JkIjoiJDJiJDEwJGFSYi5jVlBKcmtFdlFYZm9tdEc1a3VvTW54LkozUnI5emVYTVRXUGRaLk5WSDE3S09SMXQuIiwiZW1haWwiOiJhYmNAZ21haWwuY29tIiwiX192IjowfSwiaWF0IjoxNzEzMzgwMjMyfQ.WlnxsS4IZKFQMsd8faKQkr-XVJW2PicU9cs_lseI-yM")
-        .build()
-
-    client.newCall(request).enqueue(object : Callback {
-        override fun onFailure(call: Call, e: IOException) {
-            // Handle failure
-            Log.i("hafizur", e.toString())
-        }
-
-        override fun onResponse(call: Call, response: Response) {
-            // Handle response
-            val responseBody = response.body?.string()
-            responseBody?.let {
-                val jsonObject = JSONObject(it)
-                val success = jsonObject.getBoolean("success")
-                Log.i("hafizur", "Success: $success")
-
-                // Log other keys and values
-                val keys = jsonObject.keys()
-                while (keys.hasNext()) {
-                    val key = keys.next()
-                    val value = jsonObject.get(key)
-                    Log.i("hafizur", "$key: $value")
-                }
-            }
-        }
-    })
-}
-
-
-
-fun convertWaypointListToJson(waypoint: Waypoint): String {
-    val gson = Gson()
-    return gson.toJson(waypoint)
-}
-
-
-fun convertNodeInfoListToJson(nodeInfoList: List<NodeInfo>): String {
-    val gson = Gson()
-    return gson.toJson(nodeInfoList)
-}
 
 @Composable
 private fun MapView.UpdateMarkers(
@@ -299,7 +252,7 @@ fun MapView(
             val diffMin = (currentTime - it.lastHeard) / 60
             Log.i("Time","Time Difference :" + diffMin);
 
-            it.validPosition != null && diffMin<=20000
+            it.validPosition != null && diffMin<=2
         }
 
 //        val nodeString =   convertNodeInfoListToJson(nodesWithPosition);

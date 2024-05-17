@@ -25,9 +25,13 @@ class PacketRepository @Inject constructor(private val packetDaoLazy: dagger.Laz
     private val gson = Gson()  // Assuming Gson is used for JSON conversion
 
 
+
+
 suspend fun getWaypoints(): String = withContext(Dispatchers.IO) {
     val waypoints = mutableListOf<MeshProtos.Waypoint>()
 
+    val pack = packetDao.getDataPackets();
+    Log.i("pack",pack.toString());
 
     val packets = packetDao.getAllWaypoints()
     packets.forEach { packet ->

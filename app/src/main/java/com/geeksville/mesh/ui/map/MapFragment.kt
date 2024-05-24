@@ -1,5 +1,6 @@
 package com.geeksville.mesh.ui.map
 
+import android.animation.AnimatorSet
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -87,7 +88,7 @@ import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.CopyrightOverlay
 import org.osmdroid.views.overlay.MapEventsOverlay
-import org.osmdroid.views.overlay.Marker
+
 import org.osmdroid.views.overlay.Polygon
 import org.osmdroid.views.overlay.gridlines.LatLonGridlineOverlay2
 import org.osmdroid.views.overlay.infowindow.InfoWindow
@@ -106,6 +107,11 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import com.geeksville.mesh.MeshProtos
 import com.geeksville.mesh.service.DataSyncService
 import org.json.JSONObject
+import android.animation.ValueAnimator
+import android.view.animation.LinearInterpolator
+import com.google.android.material.animation.AnimatorSetCompat.playTogether
+import org.osmdroid.views.overlay.Marker
+
 @AndroidEntryPoint
 class MapFragment : ScreenFragment("Map Fragment"), Logging {
 
@@ -242,52 +248,135 @@ fun MapView(
         AppCompatResources.getDrawable(context, R.drawable.ic_baseline_location_on_24)
     }
 
+     fun animateMarkerTo(marker: Marker, newPosition: GeoPoint) {
+         Log.i("MarkerAnimation","Animation function running")
+        val start = marker.position
+        val end = newPosition
+
+        val latAnimator = ValueAnimator.ofFloat(start.latitude.toFloat(), end.latitude.toFloat())
+        val lonAnimator = ValueAnimator.ofFloat(start.longitude.toFloat(), end.longitude.toFloat())
+
+        latAnimator.addUpdateListener { animation ->
+            val lat = (animation.animatedValue as Float).toDouble()
+            val lon = marker.position.longitude
+            marker.position = GeoPoint(lat, lon)
+        }
+
+        lonAnimator.addUpdateListener { animation ->
+            val lat = marker.position.latitude
+            val lon = (animation.animatedValue as Float).toDouble()
+            marker.position = GeoPoint(lat, lon)
+        }
+
+        val animatorSet = AnimatorSet().apply {
+            playTogether(latAnimator, lonAnimator)
+            duration = 1000 // duration in milliseconds
+            interpolator = LinearInterpolator()
+        }
+
+        animatorSet.start()
+    }
     fun MapView.onNodesChanged(nodes: Collection<NodeInfo>): List<MarkerWithLabel> {
-
-       // Retaining first 10 digits
-
         val nodesWithPosition = nodes.filter {
             val currentTime = (System.currentTimeMillis() / 1000).toInt()
             val diffMin = (currentTime - it.lastHeard) / 60
-            Log.i("Time","Time Difference :" + diffMin);
-
-            it.validPosition != null && diffMin<=2
+            it.validPosition != null && diffMin <= 2
         }
-
-
-
 
         val ourNode = model.ourNodeInfo.value
         val gpsFormat = model.config.display.gpsFormat.number
         val displayUnits = model.config.display.units.number
+        val existingMarkers = overlays.filterIsInstance<MarkerWithLabel>()
+
         return nodesWithPosition.map { node ->
-
-            val(q,r)=node.position!! to node.user!!;
-
-
             val (p, u) = node.position!! to node.user!!
-            MarkerWithLabel(
-                mapView = this,
-                label = "${if (u.shortName != null) u.shortName else "id ${u.id}"} ${formatAgo(p.time)}"
-            ).apply {
-                id = u.id
-                title = "${u.longName} ${node.batteryStr}"
-                snippet = p.gpsString(gpsFormat)
-                ourNode?.distanceStr(node, displayUnits)?.let { dist ->
-                    subDescription =
-                        context.getString(R.string.map_subDescription, ourNode.bearing(node), dist)
-                }
-                setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                position = GeoPoint(p.latitude, p.longitude)
-                icon = markerIcon
+            val newGeoPoint = GeoPoint(p.latitude, p.longitude)
 
-                setOnLongClickListener {
-                    openDirectMessage(node)
-                    true
+            val existingMarker = existingMarkers.find { it.id == u.id }
+            if (existingMarker != null) {
+                animateMarkerTo(existingMarker, newGeoPoint)
+                existingMarker.apply {
+                    var label =
+                        "${if (u.shortName != null) u.shortName else "id ${u.id}"} ${formatAgo(p.time)}"
+                    title = "${u.longName} ${node.batteryStr}"
+                    snippet = p.gpsString(gpsFormat)
+                    ourNode?.distanceStr(node, displayUnits)?.let { dist ->
+                        subDescription = context.getString(R.string.map_subDescription, ourNode.bearing(node), dist)
+                    }
+                }
+                existingMarker
+            } else {
+                MarkerWithLabel(
+                    mapView = this,
+                    label = "${if (u.shortName != null) u.shortName else "id ${u.id}"} ${formatAgo(p.time)}"
+                ).apply {
+                    id = u.id
+                    title = "${u.longName} ${node.batteryStr}"
+                    snippet = p.gpsString(gpsFormat)
+                    ourNode?.distanceStr(node, displayUnits)?.let { dist ->
+                        subDescription = context.getString(R.string.map_subDescription, ourNode.bearing(node), dist)
+                    }
+                    setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                    position = newGeoPoint
+                    icon = markerIcon
+
+                    setOnLongClickListener {
+                        openDirectMessage(node)
+                        true
+                    }
                 }
             }
         }
     }
+
+
+//    fun MapView.onNodesChanged(nodes: Collection<NodeInfo>): List<MarkerWithLabel> {
+//
+//       // Retaining first 10 digits
+//
+//        val nodesWithPosition = nodes.filter {
+//            val currentTime = (System.currentTimeMillis() / 1000).toInt()
+//            val diffMin = (currentTime - it.lastHeard) / 60
+//            Log.i("Time","Time Difference :" + diffMin);
+//
+//            it.validPosition != null && diffMin<=2
+//        }
+//
+//
+//
+//
+//        val ourNode = model.ourNodeInfo.value
+//        val gpsFormat = model.config.display.gpsFormat.number
+//        val displayUnits = model.config.display.units.number
+//        return nodesWithPosition.map { node ->
+//
+//            val(q,r)=node.position!! to node.user!!;
+//
+//
+//            val (p, u) = node.position!! to node.user!!
+//            MarkerWithLabel(
+//                mapView = this,
+//                label = "${if (u.shortName != null) u.shortName else "id ${u.id}"} ${formatAgo(p.time)}"
+//            ).apply {
+//                id = u.id
+//                title = "${u.longName} ${node.batteryStr}"
+//                snippet = p.gpsString(gpsFormat)
+//                ourNode?.distanceStr(node, displayUnits)?.let { dist ->
+//                    subDescription =
+//                        context.getString(R.string.map_subDescription, ourNode.bearing(node), dist)
+//                }
+//                setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+//                position = GeoPoint(p.latitude, p.longitude)
+//                icon = markerIcon
+//
+//                setOnLongClickListener {
+//                    openDirectMessage(node)
+//                    true
+//                }
+//            }
+//        }
+//    }
+
 
     fun showDeleteMarkerDialog(waypoint: Waypoint) {
         val builder = MaterialAlertDialogBuilder(context)

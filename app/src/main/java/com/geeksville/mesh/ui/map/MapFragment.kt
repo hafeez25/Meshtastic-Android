@@ -170,7 +170,6 @@ fun MapView(
     // constants
     val prefsName = "org.geeksville.osm.prefs"
     val mapStyleId = "map_style_id"
-    var totalNodes = 0;
 
     var zoomLevelMin = 0.0
     var zoomLevelMax = 0.0
@@ -246,7 +245,7 @@ fun MapView(
     fun MapView.onNodesChanged(nodes: Collection<NodeInfo>): List<MarkerWithLabel> {
 
        // Retaining first 10 digits
-        totalNodes = nodes.size
+
         val nodesWithPosition = nodes.filter {
             val currentTime = (System.currentTimeMillis() / 1000).toInt()
             val diffMin = (currentTime - it.lastHeard) / 60
@@ -255,9 +254,7 @@ fun MapView(
             it.validPosition != null && diffMin<=2
         }
 
-//        val nodeString =   convertNodeInfoListToJson(nodesWithPosition);
-//        Log.i("markeshafiz",nodeString)
-//        sendHttpPostRequest("https://loramesh.linear-amptech.com/data/marker",nodeString)
+
 
 
         val ourNode = model.ourNodeInfo.value

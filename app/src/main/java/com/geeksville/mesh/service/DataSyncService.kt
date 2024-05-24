@@ -30,26 +30,26 @@ class DataSyncService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         serviceScope.launch {
-            while (isActive) {
-                try {
-                    val waypointsJson = packetRepository.getWaypoints()
-                   if(waypointsJson.length>0) sendHttpPostRequest("https://loramesh.linear-amptech.com/data/waypoint", waypointsJson)
-                    Log.i("DataSync", waypointsJson)
-
-                    val markersJson = myNodeDB.getAllNodes();
-                    Log.i("DataSync",markersJson)
-                    if(markersJson.length>0)
-                    sendHttpPostRequest("https://loramesh.linear-amptech.com/data/marker",markersJson)
-
-
-
-
-                } catch (e: Exception) {
-                    Log.e("DataSync", "Error in sending data: ${e.localizedMessage}")
-                }
-//                Log.i("DataSync", "Service is running")
-                delay(intervalMillis)
-            }
+//            while (isActive) {
+//                try {
+//                    val waypointsJson = packetRepository.getWaypoints()
+//                   if(waypointsJson.length>0) sendHttpPostRequest("https://loramesh.linear-amptech.com/data/waypoint", waypointsJson)
+//                    Log.i("DataSync", waypointsJson)
+//
+//                    val markersJson = myNodeDB.getAllNodes();
+//                    Log.i("DataSync",markersJson)
+//                    if(markersJson.length>0)
+//                    sendHttpPostRequest("https://loramesh.linear-amptech.com/data/marker",markersJson)
+//
+//
+//
+//
+//                } catch (e: Exception) {
+//                    Log.e("DataSync", "Error in sending data: ${e.localizedMessage}")
+//                }
+////                Log.i("DataSync", "Service is running")
+//                delay(intervalMillis)
+//            }
         }
         return START_NOT_STICKY
     }

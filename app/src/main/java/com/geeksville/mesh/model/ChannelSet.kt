@@ -26,7 +26,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.jvm.Throws
 
-internal const val URL_PREFIX = "https://meshtastic.org/e/#"
+internal const val URL_PREFIX = "https://linear-amptech.com/e/#"
 private const val BASE64FLAGS = Base64.URL_SAFE + Base64.NO_WRAP + Base64.NO_PADDING
 
 /**

@@ -245,7 +245,9 @@ fun MapView(
     var showCurrentCacheInfo by remember { mutableStateOf(false) }
 
     val markerIcon by lazy {
-        AppCompatResources.getDrawable(context, R.drawable.ic_baseline_location_on_24)
+//        AppCompatResources.getDrawable(context, R.drawable.ic_baseline_location_on_24)
+        AppCompatResources.getDrawable(context, R.drawable.car)
+
     }
 
      fun animateMarkerTo(marker: Marker, newPosition: GeoPoint) {
@@ -270,7 +272,7 @@ fun MapView(
 
         val animatorSet = AnimatorSet().apply {
             playTogether(latAnimator, lonAnimator)
-            duration = 1000 // duration in milliseconds
+            duration = 10000 // duration in milliseconds
             interpolator = LinearInterpolator()
         }
 

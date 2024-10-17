@@ -246,7 +246,7 @@ fun MapView(
 
     val markerIcon by lazy {
 //        AppCompatResources.getDrawable(context, R.drawable.ic_baseline_location_on_24)
-        AppCompatResources.getDrawable(context, R.drawable.car)
+        AppCompatResources.getDrawable(context, R.drawable.tank)
 
     }
 
